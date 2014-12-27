@@ -33,7 +33,6 @@ namespace juego_gato
 
         private void btn1_Click(object sender, RoutedEventArgs e)
         {
-
             evento(0, 0); 
             comprobar();      
         }
@@ -86,7 +85,7 @@ namespace juego_gato
             comprobar();
         }
 
-        public void evento(int fila, int columna)
+        private void evento(int fila, int columna)
         {
             
             switch (fila)
@@ -94,7 +93,7 @@ namespace juego_gato
                 case 0:
                     switch (columna)
                     {
-                        case 0: this.mapa[0, 0] = seteoImagen(this.image1, this.btn1);  break;
+                        case 0: this.mapa[0, 0] = seteoImagen(this.image1, this.btn1); break;
                         case 1: this.mapa[0, 1] = seteoImagen(this.image2, this.btn2); break;
                         case 2: this.mapa[0, 2] = seteoImagen(this.image3, this.btn3); break;
                     }; break;
@@ -116,51 +115,62 @@ namespace juego_gato
 
         }
 
-        public int  comprobar() 
+        private void  comprobar() 
         {
-            
+
             for(int fila = 0; fila < 3; fila++) 
             {
                 if (mapa[fila, 0] == mapa[fila, 1] && mapa[fila, 1] == mapa[fila, 2]) 
                 {
                     MessageBox.Show("Gano jugador "+mapa[fila,0]);
                     bloqueoElmentos();
-                    return mapa[fila, 0];
+                    reset();
+                    this.contador = 0;
+                    return;
                 }
                 if (mapa[0, fila] == mapa[1, fila] && mapa[1, fila] == mapa[2, fila]) 
                 {
                     MessageBox.Show("Gano jugador "+mapa[0,fila]);
                     bloqueoElmentos();
-                    return mapa[0,fila];
+                    reset();
+                    this.contador = 0;
+                    return;
                 }
             }
             if (mapa[0, 0] == mapa[1, 1] && mapa[1, 1] == mapa[2, 2]) 
             {
                 MessageBox.Show("Gano jugador " + mapa[0, 0]);
                 bloqueoElmentos();
-                return mapa[0, 0];
+                reset();
+                this.contador = 0;
+                return;
             }
             if (mapa[2, 0] == mapa[1, 1] && mapa[1, 1] == mapa[0, 2]) 
             {
                 MessageBox.Show("Gano jugador " + mapa[2, 0]);
                 bloqueoElmentos();
-                return mapa[2, 0];
+                reset();
+                this.contador = 0;
+                return;
             }
-
-            return -1;
+            if (contador %9 == 0) {
+                MessageBox.Show("Empate");
+                reset();
+                return;
+            }
         }
 
-        public int seteoImagen(Image image, Button button)
+        private int seteoImagen(Image image, Button button)
         {
             int user = -1;
             if (contador % 2 == 0)
             {
-                user = 0;
+                user = 1;
                 image.Source = new BitmapImage(new Uri("src/img/circulo.png", UriKind.Relative));
             }
             else
             {
-                user = 1;
+                user = 2;
                 image.Source = new BitmapImage(new Uri("src/img/equis.png", UriKind.Relative));
             }
             button.Visibility = Visibility.Hidden;
@@ -169,7 +179,7 @@ namespace juego_gato
             return user;
         }
 
-        public void bloqueoElmentos() 
+        private void bloqueoElmentos() 
         {
             foreach (var c in this.grid_principal.Children) 
             {
@@ -178,6 +188,25 @@ namespace juego_gato
                     ((Button)c).Visibility = Visibility.Hidden;
                 }
             }
+        }
+
+        private void reset()
+        {
+            foreach (var c in this.grid_principal.Children) 
+            {
+                if (c is Button)
+                {
+                    ((Button)c).Visibility = Visibility.Visible;
+                }
+                if (c is Image) {
+                    ((Image)c).Source = null;
+                }
+            }
+
+            this.mapa = new int[,] { {-1,-2,-3},
+                                     {-4,-5,-6},
+                                     {-1,-2,-3}
+                                   };
         }
         
 
